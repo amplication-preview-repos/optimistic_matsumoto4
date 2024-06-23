@@ -1,0 +1,50 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Transaction {
+  amount      Float?
+  block       Block?    @relation(fields: [blockId], references: [id])
+  blockId     String?
+  createdAt   DateTime  @default(now())
+  fromAddress String?
+  hash        String?
+  id          String    @id @default(cuid())
+  timestamp   DateTime?
+  toAddress   String?
+  updatedAt   DateTime  @updatedAt
+}
+
+model Address {
+  address   String?
+  balance   Float?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  updatedAt DateTime @updatedAt
+  wallets   Wallet[]
+}
+
+model Block {
+  createdAt    DateTime      @default(now())
+  hash         String?
+  id           String        @id @default(cuid())
+  nonce        Int?
+  previousHash String?
+  timestamp    DateTime?
+  transactions Transaction[]
+  updatedAt    DateTime      @updatedAt
+}
+
+model Wallet {
+  address   Address? @relation(fields: [addressId], references: [id])
+  addressId String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  name      String?
+  updatedAt DateTime @updatedAt
+}
